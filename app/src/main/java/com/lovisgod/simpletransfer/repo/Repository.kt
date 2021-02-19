@@ -14,7 +14,6 @@ class Repository {
 
     suspend fun getToken(xmlbody: String): Response<TokenPassportResponse> {
         val body = StringConverter().toBody(xmlbody)
-        println(body)
         return tokenClient.getToken(body)
     }
 
