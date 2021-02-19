@@ -20,6 +20,6 @@ class Repository {
 
     suspend fun makeTransfer(xmlbody: String, token: String): Response<TransferResponse> {
         val body = StringConverter().toBody(xmlbody)
-        return tokenClient.makeTransfer(body, token)
+        return knClient.makeTransfer(body, token)
     }
 }

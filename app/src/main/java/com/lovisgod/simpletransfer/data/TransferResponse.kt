@@ -1,41 +1,59 @@
 package com.lovisgod.simpletransfer.data
 
+import org.simpleframework.xml.Element
+import org.simpleframework.xml.Root
 import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlRootElement
 
 
-@XmlRootElement(name = "transferResponse")
+@Root(name = "transferResponse", strict = false)
 data class TransferResponse (
-    @XmlElement(required = false, name = "description")
+    @field:Element(required = false, name = "description")
+    @param:Element(required = false, name = "description")
     var description: String? = "",
-    @XmlElement(required = false, name = "field39")
+    @field:Element(required = false, name = "field39")
+    @param:Element(required = false, name = "field39")
     var field39: String? = "",
-    @XmlElement(required = false, name = "authId")
+    @field:Element(required = false, name = "authId")
+    @param:Element(required = false, name = "authId")
     var authId : String? = "",
-    @XmlElement(required = false, name = "hostEmvData")
+    @field:Element(required = false, name = "hostEmvData")
+    @param:Element(required = false, name = "hostEmvData")
     var hostEmvData : HostEmvData? = null,
-    @XmlElement(required = false, name = "stan")
+    @field:Element(required = false, name = "referenceNumber")
+    @param:Element(required = false, name = "referenceNumber")
+    var referenceNumber : String? = "",
+    @field:Element(required = false, name = "stan")
+    @param:Element(required = false, name = "stan")
     var stan: Int? = 0,
-    @XmlElement(required = false, name = "transactionChannelName")
+    @field:Element(required = false, name = "transactionChannelName")
+    @param:Element(required = false, name = "transactionChannelName")
     var transactionChannelName: String? = "",
-    @XmlElement(required = false, name = "wasReceive")
+    @field:Element(required = false, name = "wasReceive")
+    @param:Element(required = false, name = "wasReceive")
     var wasReceive: Boolean? = false,
-    @XmlElement(required = false, name = "wasSend")
+    @field:Element(required = false, name = "wasSend")
+    @param:Element(required = false, name = "wasSend")
     var wasSend: Boolean? = false
 
 )
 
 
-@XmlRootElement(name = "hostEmvData")
-class HostEmvData {
-    @XmlElement(required = false, name = "AmountAuthorized")
-    var AmountAuthorized: Int? = 0
-    @XmlElement(required = false, name = "AmountOther")
-    var AmountOther: Int? = 0
-    @XmlElement(required = false, name = "atc")
-    var atc: String? = ""
-    @XmlElement(required = false, name = "iad")
-    var iad: String? = ""
-    @XmlElement(required = false, name = "rc")
+@Root(name = "hostEmvData")
+data class HostEmvData (
+    @field:Element(required = false, name = "AmountAuthorized")
+    @param:Element(required = false, name = "AmountAuthorized")
+    var AmountAuthorized: Int? = 0,
+    @field:Element(required = false, name = "AmountOther")
+    @param:Element(required = false, name = "AmountOther")
+    var AmountOther: Int? = 0,
+    @field:Element(required = false, name = "atc")
+    @param:Element(required = false, name = "atc")
+    var atc: String? = "",
+    @field:Element(required = false, name = "iad")
+    @param:Element(required = false, name = "iad")
+    var iad: String? = "",
+    @field:Element(required = false, name = "rc")
+    @param:Element(required = false, name = "rc")
     var rc: String? = ""
-}
+)
