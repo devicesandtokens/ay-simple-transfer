@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         dialog = customdailog(this)
         viewmodel.getToken().observe(this, Observer {
             dialog.stop()
-            println(it.toString())
             it?.let {
                 token = it.toString()
             }
@@ -69,8 +68,7 @@ class MainActivity : AppCompatActivity() {
                     dialog.stop()
                     it?.let {
                         Snackbar.make(binding.submitBtn, it.description.toString(), Snackbar.LENGTH_LONG).show()
-                        println(it.field39.toString())
-                        if (it.field39 == "00") {
+                        if (it.field39.toString() == "00") {
                             binding.amount.clear()
                             binding.pin.clear()
                         }
