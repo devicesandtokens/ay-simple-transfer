@@ -1,13 +1,18 @@
 package com.lovisgod.simpletransfer.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import com.lovisgod.simpletransfer.data.TransferResponse
+import com.lovisgod.simpletransfer.network.ResponseHelper
 import com.lovisgod.simpletransfer.repo.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class TransferViewModel: ViewModel() {
+    private val _message: MutableLiveData<String> = MutableLiveData("")
+    val message: LiveData<String> get() = _message
     var repo = Repository()
     fun getToken () = liveData(Dispatchers.Main) {
             var xmlString = """<tokenPassportRequest>
@@ -39,7 +44,7 @@ class TransferViewModel: ViewModel() {
 
     }
 
-    fun makeTransfer(token: String, amount: Int) = liveData(Dispatchers.IO) {
+    fun makeTransfer(token: String, amount: Int, accountType: String) = liveData(Dispatchers.IO) {
         var xmlString = """<transferRequest>
                                 <terminalInformation>
                                      <batteryInformation>100</batteryInformation>
@@ -52,7 +57,7 @@ class TransferViewModel: ViewModel() {
                                      <posEntryMode>051</posEntryMode>
                                      <posGeoCode>00234000000000566</posGeoCode>
                                      <printerStatus>1</printerStatus>
-                                     <terminalId>20390007</terminalId>
+                                     <terminalId>2ISW0001</terminalId>
                                      <terminalType>22</terminalType>
                                      <transmissionDate>2020-09-18T10:52:26</transmissionDate>
                                      <uniqueId>3H661643</uniqueId>
@@ -87,10 +92,10 @@ class TransferViewModel: ViewModel() {
                                 </cardData>
                                 <originalTransmissionDateTime>2020-09-18T10:52:26</originalTransmissionDateTime>
                                 <stan>000018</stan>
-                                <fromAccount>Default</fromAccount>
+                                <fromAccount>${accountType}</fromAccount>
                                 <toAccount></toAccount>
                                 <minorAmount>${amount * 100}</minorAmount>
-                                <receivingInstitutionId>627821</receivingInstitutionId>
+                                <receivingInstitutionId>627858</receivingInstitutionId>
                                 <surcharge>1075</surcharge>
                                 <pinData>
                                     <ksnd>605</ksnd>
@@ -104,8 +109,14 @@ class TransferViewModel: ViewModel() {
 </transferRequest>"""
         var response = repo.makeTransfer(xmlbody = xmlString, token = token)
         response?.let {
-            if (it.isSuccessful) {
-                emit(it.body())
+            when (it) {
+                is ResponseHelper.Success -> {
+                    emit(it.value)
+                }
+
+                is ResponseHelper.NetworkError -> {
+                   _message.postValue(it.message.toString())
+                }
             }
         }
     }

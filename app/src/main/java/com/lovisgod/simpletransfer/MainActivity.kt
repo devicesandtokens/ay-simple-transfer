@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import com.lovisgod.simpletransfer.databinding.ActivityMainBinding
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private val viewmodel : TransferViewModel by lazy {
-        ViewModelProviders.of(
+        ViewModelProvider(
             this,
             TransferViewModelFactory()
         ).get(TransferViewModel::class.java)
@@ -42,11 +43,12 @@ class MainActivity : AppCompatActivity() {
        binding.submitBtn.setOnClickListener {
            makeTransfer()
        }
+        viewmodel.message.observe(this, messageObserver)
     }
 
 
     private fun setTypeItems() {
-        val types = listOf("Savings", "Current")
+        val types = listOf("Savings", "Current", "Credit", "Default")
         val adapter = ArrayAdapter(this, R.layout.list_item, types)
         (binding.accountTypeContainer.editText as AutoCompleteTextView).setAdapter(adapter)
     }
@@ -63,16 +65,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun makeTransfer() {
         dialog = customdailog(this)
-        viewmodel.makeTransfer(token = token, amount = binding.amount.getTextValue().toInt()).
+        viewmodel.makeTransfer(token = token, amount = binding.amount.getTextValue().toInt(), accountType = binding.accountType.getTextValue()).
                 observe(this, Observer {
                     dialog.stop()
                     it?.let {
                         Snackbar.make(binding.submitBtn, it.description.toString(), Snackbar.LENGTH_LONG).show()
                         if (it.field39.toString() == "00") {
                             binding.amount.clear()
-                            binding.pin.clear()
+//                            binding.pin.clear()
                         }
                     }
                 })
+    }
+
+    val messageObserver = Observer<String> {
+        it?.let {
+            if (it.isNullOrEmpty()) {
+              // do nothing
+            } else {
+                if(dialog.isShowing) {
+                    dialog.stop()
+                }
+                Snackbar.make(binding.submitBtn, it, Snackbar.LENGTH_LONG).show()
+            }
+        }
     }
 }
